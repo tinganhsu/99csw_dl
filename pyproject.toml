@@ -1,0 +1,25 @@
+[project]
+name = "ninetynine-dl"
+version = "0.1.0"
+description = "A modern Python refactor of 99dl for read.99csw.com"
+dependencies = [
+    "typer>=0.12.0",
+    "rich>=13.0.0",
+    "httpx[http2,socks]>=0.27.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=5.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "platformdirs>=4.0.0",
+    "ebooklib>=0.18",
+]
+
+[project.scripts]
+99dl = "ninetynine_dl.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["ninetynine_dl*"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

@@ -1,80 +1,71 @@
-# 99dl — 九九藏书网书籍下载工具
+# 99dl (Python 3.14 重構版)
 
-![下载操作](https://i.loli.net/2018/09/15/5b9c8f6b480bd.gif)
+[![Python 3.14](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-green.svg)](https://opensource.org/licenses/GPL-3.0)
 
-## 描述
+這是一個將 [99dl](https://github.com/zsakvo/99dl) 從 Node.js 重構為 Python 3.14 的工具，專為從 [read.99csw.com](https://read.99csw.com) 下載書籍並轉換為高品質 **EPUB** 或 **TXT** 格式而設計。
 
-[99 藏书网](http://www.99lib.net/ "99藏书网")是一个图书阅读平台，拥有较为良好的资源以及阅读环境。但是网站自身并无任何的客户端，所以在移动设备上阅读的时候只能通过访问 wap 网页，稍显不便。本项目可以根据输入的书号（从该图书页面的 url 中获取），自动从该网站获取资源，解密出正确的顺序，并输出为电子书格式，以便获取更方便的阅读体验。
+## ✨ 特色
 
-## 准备
+- **現代化非同步架構**：使用 `httpx` 與 `asyncio` 實作高效的併發下載。
+- **精準解碼引擎**：完美支援九九藏書的新版解密邏輯，自動還原被打亂的段落並清理干擾標籤。
+- **豐富中繼資料**：自動抓取書名、作者與類別，並封裝至 EPUB 的 Metadata 中。
+- **精美介面**：使用 `Rich` 庫提供即時下載進度條與彩色終端回饋。
+- **安全性增強**：內建輸入驗證與檔名安全過濾，防止路徑遍歷攻擊。
 
-首先你的系统需要安装有 Node.js 。
+## 🛠️ 安裝方式
 
-可以从官网获取相关安装包，亦可以通过仓库或者类似于[nvm](https://github.com/creationix/nvm "nvm")等脚本进行安装。
+1. **複製專案**：
+   ```bash
+   git clone https://github.com/your-username/99dl.git
+   cd 99dl
+   ```
 
-## 安装 / 更新 / 卸载
+2. **建立虛擬環境**：
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # macOS/Linux
+   # 或 .\venv\Scripts\activate (Windows)
+   ```
 
-启动终端（Windows 为命令提示符或者 Powershell），执行命令
+3. **安裝依賴套件**：
+   ```bash
+   pip install .
+   ```
 
-```
-npm i 99dl -g
-# 大陆亦可以使用 cnpm 来提高安装速度
-```
+## 🚀 使用說明
 
-如需卸载，则执行
+安裝完成後，您可以直接使用 `99dl` 指令進行操作。
 
-```
-npm uninstall 99dl -g
-```
+### 下載書籍
 
-## 使用
+您可以透過書籍 ID (URL 中的數字) 來下載書籍。
 
-直接执行命令
+```bash
+# 下載為 EPUB 格式 (預設)
+99dl download 4842
 
-```
-99dl -b 要下载的书号
-```
+# 下載為 TXT 格式
+99dl download 288 --format txt
 
-书号为纯数字。以《白夜追凶》为例，其目录 Url 链接为`http://www.99lib.net/book/8558/index.htm`，则对应的书号即为`8558`。
-
-## 配置
-
-输入命令
-
-```
-99dl -s
-```
-
-即可进入设置页面。
-
-目前有四个可设置项，按对应的数字进入，之后依要求输入内容，回车即可。
-
-```
-[1] Download path # 下载目录，必须设置
-[2] Download thread # 下载线程数
-[3] Download timeout # 下载超时
-[4] Proxy # 使用代理
+# 指定下載執行緒數量 (預設為 3)
+99dl download 4842 --threads 5
 ```
 
-- **下载目录**  
-  使用前必须先行设置，文件夹无需手动建立，下载中会自动检查并建立对应文件夹。
+### 參數說明
 
-- **下载线程数**  
-  同时获取的章节数目，范围为`1~10`，默认为`3`。并不建议将之设置的过大，否则可能会导致网站失去响应反而拖累下载速度。
+- `book_id`：書籍的唯一識別碼（例如 `https://read.99csw.com/book/4842/` 中的 `4842`）。
+- `--format`, `-f`：輸出格式，可選 `epub` 或 `txt`。
+- `--threads`, `-t`：並發下載的數量。
 
-- **下载超时**  
-  在网站多久后没有返回内容即视为访问失败，单位毫秒，默认值为`2000`，为了稳定性的需要，自行设置需要值大于`1000`
+## 📂 輸出目錄
 
-- **使用代理**  
-  在本人的测试环境下发现直接访问该网站现在并不稳定，此状况在加上代理以后得以解决。故而如果下载时频繁出错，推荐自行通过代理服务器获取资源（目前仅支持 http 代理）
+下載完成的書籍會儲存在專案根目錄下的 `downloads/` 資料夾中。
 
-## ToDo
+## ⚠️ 免責聲明
 
-- [ ] 同时下载多个作品
-- [ ] 支持输出 Epub 格式书籍
-- [x] 支持 socks 代理
-- [ ] 支持一定程度上的搜索功能
+本工具僅供學術交流與個人閱讀習慣研究使用，請勿將下載內容用於任何商業用途。請尊重原作者版權。
 
-## 鸣谢
+## 📜 授權
 
-第一次使用 Node.js 写 cli ，其中也遇到过各种问题，感谢[pxder](https://github.com/YKilin/pxder "pxder")这个项目以及其它网友们记录的相关教程，在我从萌生想法到初步实现的过程中，令我中收获良多。
+GPL-3.0-or-later
